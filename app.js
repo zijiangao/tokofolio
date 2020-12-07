@@ -117,9 +117,9 @@ app.post("/api/v1/room/new", chatController.newRoom);
 app.get("/api/v1/room/sync", verifyJWT, chatController.syncRooms);
 app.get("/api/v1/room/:room", chatController.findRoom);
 const pusher = new Pusher({
-  appId: "1109948",
-  key: "639cb43c9e51d063cebf",
-  secret: "b8914461fc6d42c4e3a7",
+  appId: process.env.APPID,
+  key: process.env.KEY,
+  secret: process.env.SECRET,
   cluster: "ap1",
   useTLS: true,
 });
