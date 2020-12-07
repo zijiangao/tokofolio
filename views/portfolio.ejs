@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css" integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="../portfolio_style.css">
+   
+    <title>Tokofolio</title>
+    <style type="text/css">
+
+         
+           
+            .search-list {
+               background-color: black;
+               text-align: center;
+               color: white;
+                width: 400px;
+                border: .5em solid rgb(143, 138, 239);
+                border-radius: 3em;
+                list-style-type: none;
+                /* box-shadow: 5px 5px #2c3e50; */
+                margin: 0 auto;
+        
+            }
+          </style>
+</head>
+<body>  
+ <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto align-items-baseline">
+      <li class="nav-item active">
+        <a class="nav-link" href="/"><img src="/./../tokofolio_logo1.svg" alt width='72' height='72'> <span class="sr-only"></span></a>
+      </li> 
+     <%if(loginStatus){%>
+        <li class="nav-item">
+          <a class="nav-link" href="/../users/logout">Logout</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/../users/dashboard">My Tokofolio</a>
+        </li>
+       <%}else{%>
+        <li class="nav-item">
+          <a class="nav-link" href="/../users/login">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/../users/register">Register</a>
+        </li>
+        
+      <%}%>
+    </ul>
+  </div>
+</nav>
+    <header>
+        <h1>Search Result</h1>
+    </header>
+    
+  
+      
+        <ul class="search-list">
+          
+            <% items.forEach( (item) => { %>
+              <br/>
+                <li><%= item.name%></li>
+                <br/>
+                <li><img src='/cryptocurrency_icons/svg/color/<%=item.symbol.toLowerCase()%>.svg' alt width='72' height='72'></li> 
+                <br/>
+                <li><%= 'Symbol: '+ item.symbol%></li> 
+                <li><%= 'Price: 'item.quote.USD.price+ %></li>
+                <li><%= 'Volume 24h: '+item.quote.USD.volume_24h %></li>
+                <li><%= 'Percent change last 1h: '+item.quote.USD.percent_change_1h %></li>
+                <li><%= 'Percent change last 24h: '+item.quote.USD.percent_change_24h %></li>
+                <li><%= 'Percent change last 1d: '+item.quote.USD.percent_change_7d %></li>
+                <br/>
+                <li><a href = '/users/dashboard/new?symbol=<%=item.symbol%>&price=<%=item.quote.USD.price%>'><button type="submit" class="btn btn-primary">Add to Tokofolio</button></a></li>
+              <br/>
+             <%})%> 
+        </ul>
+
+
+    
+
+    
+  
+
+  <!-- Font Awesome -->
+  <script
+    src="https://kit.fontawesome.com/84f7bf6831.js"
+    crossorigin="anonymous"
+  ></script>
+<!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script src="./app.js"></script>
+  
+</body>
+</html>

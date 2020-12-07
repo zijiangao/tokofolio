@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css" integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="../user_style.css">
+    
+    <title>Tokofolio</title>
+    <style>
+      .table td{
+        vertical-align: baseline;
+        background-color: rgba(255, 255, 255, 0.7);
+      }
+
+      form {
+        padding: 2px;
+      }
+    </style>
+</head>
+<body>  
+<div class="marquee">
+  <ul class = "marquee-content">
+    <%for (let symbol in items){%>
+      <li><%=symbol%>: <%= Math.round(items[symbol].quote.USD.price*1000)/1000%></li>
+    <%}%>
+  </ul>
+  
+</div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto align-items-baseline">
+      <li class="nav-item active">
+        <a class="nav-link" href="/"><img src="/./../tokofolio_logo1.svg" alt width='72' height='72'> <span class="sr-only"></span></a>
+      </li>
+      <%if(loginStatus){%>
+        <li class="nav-item">
+          <a class="nav-link" href="/../users/logout">Logout</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+        
+      <%}else{%>
+        <li class="nav-item">
+          <a class="nav-link" href="/../users/login">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/../users/register">Register</a>
+        </li>
+        
+      <%}%>
+    </ul>
+  </div>
+</nav>
+<!--  modal window for delete acccount action -->
+  <div id = 'modal' style='z-index:5;transition:all 2s;display:none;justify-content:center; align-items:center;position: absolute; width: 100%; height: 100vh; background-color: rgba(220,220,220,0.5);top:0; left:0'>
+    <div style='padding: 20px; width:fit-content; height: fit-content; background-color: white;'>
+      Are you sure you want delete your account
+      <div style='display: flex; justify-content: space-around; align-items: center'>
+        <button class="btn btn-primary btn-lg" id='closeModalBtn'>Cancel</button>
+        <form method="POST" action="/users/delete?_method=DELETE">
+          <button type="submit" class="btn btn-warning  btn-sm">Delete Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+    <div class="container">
+        <h1>Welcome to your Tokofolio  <div class="action-button" id= "portfolio-submit">
+        <a href = '/users/dashboard/new'><button type="submit" class="btn btn-primary btn-sm">Add to Tokofolio</button></a>
+        <button class="btn btn-danger  btn-sm" id='openModalBtn'>Delete Account</button>
+        <script>
+          let modal = document.querySelector('#modal')
+          let openModalBtn = document.querySelector('#openModalBtn')
+          let closeModalBtn = document.querySelector('#closeModalBtn')
+          openModalBtn.onclick=function(){
+            modal.style.display = 'flex'
+          }
+          closeModalBtn.onclick=function(){
+            modal.style.display = 'none'
+          }
+        </script>
+
+      
+
+          <!-- <button type="submit" class="btn btn-primary">Add to Tokofolio</button> -->
+      </div></h1> 
+        
+        
+
+         <!-- <%=JSON.stringify(user)%>  -->
+
+        <table class = "table">
+          <thead class= "thead-dark">
+        <tr>
+
+          <th>Token</th>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Qty</th>
+          <th>Price buy</th>
+          <th>Price today</th>
+          <th>P/L</th>
+          <th>Actions</th>
+        
+      </tr>
+      </thead>
+      <% let total = 0; %>
+      <% user.portfolio.forEach((item, index) => { %>
+        <tr>
+          <td><img src='/cryptocurrency_icons/svg/color/<%=item.symbol.toLowerCase()%>.svg' alt width='50' height='50'></td>
+          <td><%= item.symbol%></td>
+          <td><%= item.date%></td>
+          <td><%= item.qty%></td>
+          <td><%= item.price%></td>
+          <%
+            let current = Math.round(items[item.symbol.toUpperCase()].quote.USD.price*1000)/1000
+            let profit = (current - item.price) * item.qty
+          %>
+          <td><%= current%></td>
+          <td style='color:<%= profit>0?'green':'red'%>'><%= profit %></td>
+          <td>
+            <div class="d-flex">
+              <button class="btn btn-primary btn-sm" onclick='edit("<%= item.symbol%>","<%= item.date%>","<%= item.qty%>","<%= item.price%>","<%=index%>")'>Edit</button>
+
+            
+              <form method="POST" action="/users/dashboard/<%= item.portfolio %>?_method=PATCH">
+                <input type='hidden' value='<%=index%>' name='index'/>
+                <button class="btn btn-danger btn-sm">Remove</button>
+              </form>
+            </div>
+            
+
+
+            </td>
+        </tr>
+        <% 
+       total += profit;
+      } ) %>
+        </table>
+<p>Total: $<span style='color:<%=total>0?'green':'red'%>'><%= total %></span></p>
+    </div>
+    <!-- Edit item modal -->
+    <div id = 'editmodal' style='transition:all 2s;display:none;justify-content:center; align-items:center;position: absolute; width: 100%; height: 100vh; background-color: rgba(220,220,220,0.5);top:0; left:0'>
+      <div style='padding: 20px; width:fit-content; height: fit-content; background-color: white;'>
+        <div style='display: flex; justify-content: space-around;'>
+          <button style='position:absolute;top:20px;right:20px; padding: 20px' id='closeEditModalBtn'>X</button>
+          <form method="POST" action="/user/portfolio?_method=PATCH">
+            <input type='hidden' id='index' name='index'/>
+            <div class="form-group">
+              <input type="text" placeholder="Symbol"  STYLE="color: grey; font-family: Verdana; font-weight: bold; font-size: 15px; background-color: white;" size="30" maxlength="30" class="form-control"  id="symbol" name="symbol"/>
+            </div>
+            <div class="form-group">
+              <input type="date" placeholder="Date" STYLE="color: grey; font-family: Verdana; font-weight: bold; font-size: 15px; background-color: white;" size="30" maxlength="30" class="form-control" id="date" name="date"/>
+            </div>
+            <div class="form-group">
+                <input type="text"placeholder="Quantity" STYLE="color: grey; font-family: Verdana; font-weight: bold; font-size: 15px; background-color: white;" size="30" maxlength="30" class="form-control" id="qty" name="qty"/>
+              </div>
+              <div class="form-group">
+                <input type="text" placeholder="Price" STYLE="color: grey; font-family: Verdana; font-weight: bold; font-size: 15px; background-color: white;" size="30" maxlength="30"class="form-control" id="price" name="price"/>
+              </div>
+            <button type="submit" class="btn btn-warning">save</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>
+      let editmodal = document.querySelector('#editmodal')
+      let closeEditModalBtn = document.querySelector('#closeEditModalBtn')
+      function edit(symbol,date,qty,price,index){
+        editmodal.style.display = 'flex'
+        document.querySelector('#symbol').value = symbol
+        document.querySelector('#date').value = date
+        document.querySelector('#qty').value = qty
+        document.querySelector('#price').value = price
+        document.querySelector('#index').value = index
+
+      }
+     
+      closeEditModalBtn.onclick=function(){
+        editmodal.style.display = 'none'
+      }
+    </script>
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/84f7bf6831.js" crossorigin="anonymous"></script>
+
+
+<%- include('../partials/footer'); %>

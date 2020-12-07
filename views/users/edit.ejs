@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css" integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../user_style.css">
+    
+    <title>Tokofolio</title>
+</head>
+<body class="text-center" >  
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto align-items-baseline">
+        <li class="nav-item active">
+          <a class="nav-link" href="/"><img src="/./../tokofolio_logo1.svg" alt width='72' height='72'> <span class="sr-only"></span></a>
+        </li> 
+       <%if(loginStatus){%>
+          <li class="nav-item">
+            <a class="nav-link" href="/../users/logout">Logout</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/../users/dashboard">My Tokofolio</a>
+          </li>
+         <%}else{%>
+          <li class="nav-item">
+            <a class="nav-link" href="/../users/login">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/../users/register">Register</a>
+          </li>
+          
+        <%}%>
+      </ul>
+    </div>
+  </nav>
+<div class="container login">   
+  <img class="mb-4" src="/../tokofolio_logo1.svg" alt="200" width="200" height="300">
+      
+  <h1 class="h3 mb-3 font-weight-normal" id= title>Edit Token</h1>
+<form method="POST" action="/users/dashboard/new">
+    <div class="form-group">
+    
+      <input type="text"placeholder="Symbol" value='<%=inputs.symbol%>' STYLE="color: grey; font-family: Verdana; font-weight: bold; font-size: 15px; background-color: white;" size="30" maxlength="30" class="form-control"  id="symbol" name="symbol">
+    </div>
+    <div class="form-group">
+   
+      <input type="date" placeholder="Date" STYLE="color: grey; font-family: Verdana; font-weight: bold; font-size: 15px; background-color: white;" size="30" maxlength="30" class="form-control" id="date" name="date">
+    </div>
+    <div class="form-group">
+      
+        <input type="text"placeholder="Quantity" STYLE="color: grey; font-family: Verdana; font-weight: bold; font-size: 15px; background-color: white;" size="30" maxlength="30" class="form-control" id="qty" name="qty">
+      </div>
+      <div class="form-group">
+   
+        <input type="text" placeholder="Price" value='<%=inputs.price%>' STYLE="color: grey; font-family: Verdana; font-weight: bold; font-size: 15px; background-color: white;" size="30" maxlength="30"class="form-control" id="price" name="price">
+      </div>
+     
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+</div>
+
+
+  <!-- Font Awesome -->
+  <script
+    src="https://kit.fontawesome.com/84f7bf6831.js"
+    crossorigin="anonymous"
+  ></script>
+<!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script src="./app.js"></script>
+  
+</body>
+</html>
