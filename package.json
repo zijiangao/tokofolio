@@ -23,6 +23,7 @@
     "js": "^0.1.0",
     "jsonwebtoken": "^8.5.1",
     "method-override": "^3.0.0",
+    "moment": "^2.29.1",
     "mongoose": "^5.10.8",
     "pusher": "^4.0.1",
     "request": "^2.88.2",

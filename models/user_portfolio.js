@@ -16,7 +16,7 @@ const userPortfolioSchema = new Schema({
   name: String,
   user_ID: {
     type: Schema.Types.ObjectId,
-    ref: "user",
+    ref: "User",
   },
 });
 

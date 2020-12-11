@@ -72,8 +72,27 @@ const controllers = {
               name: req.body.first_name,
               user_ID: createResult._id,
             });
-            return res.json({
+            const token = jwt.sign(
+              {
+                sub: createResult._id,
+                name: createResult.first_name,
+                email: createResult.email,
+                chatRooms: createResult.chatRooms,
+              },
+              process.env.JWT_SECRET,
+              {
+                algorithm: "HS384",
+                expiresIn: "1h",
+              }
+            );
+            // decode JWT to get raw values
+            const rawJWT = jwt.decode(token);
+
+            // return token as json response
+            res.json({
               success: true,
+              token: token,
+              expiresAt: rawJWT.exp,
             });
           })
           .catch((err) => {
@@ -172,54 +191,44 @@ const controllers = {
     res.redirect("../");
   },
   dashboard: (req, res) => {
-    var decoded = jwt.verify(req.query.token, process.env.JWT_SECRET);
-    console.log(decoded); // bar
-    UserPortfolioModel.findOne({ user_ID: decoded.sub })
-      .then((data) => {
-        let defaultList = "btc,eth,xrp,bnb,eos,ltc,usdt,xtz,bch,bsv,link,dot,ada,xmr,trx,xlm,neo".split(
-          ","
-        );
-        let list = Array.from(
-          new Set([...data.portfolio.map((i) => i.symbol), ...defaultList])
-        );
+    let defaultList = "btc,eth,xrp,bnb,eos,ltc,usdt,xtz,bch,bsv,link,dot,ada,xmr,trx,xlm,neo".split(
+      ","
+    );
 
-        const requestOptions = {
-          method: "GET",
-          uri: `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${list.join()}`,
-          headers: {
-            "X-CMC_PRO_API_KEY": "f7eb16ab-8a3c-4086-8d33-1e76b4cfe6d3",
-          },
-          json: true,
-          gzip: true,
-        };
+    const requestOptions = {
+      method: "GET",
+      uri: `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${defaultList.join()}`,
+      headers: {
+        "X-CMC_PRO_API_KEY": "f7eb16ab-8a3c-4086-8d33-1e76b4cfe6d3",
+      },
+      json: true,
+      gzip: true,
+    };
 
-        rp(requestOptions)
-          .then((response) => {
-            res.json({
-              user: data,
-              items: response.data,
-            });
-          })
-          .catch((err) => {
-            console.log("API call error:", err.message);
-          });
+    rp(requestOptions)
+      .then((response) => {
+        res.json(response.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log("API call error:", err.message);
+      });
   },
 
   getAllPortfolios: (req, res) => {
     var decoded = jwt.verify(req.query.token, process.env.JWT_SECRET);
     console.log(decoded); // bar
+
     UserPortfolioModel.find({ user_ID: decoded.sub })
       .then((data) => {
-        let portfolios = data.map((item) => {
-          return {
-            name: item.name ? item.name : "Main",
-            id: item.id,
-          };
-        });
-        console.log(portfolios);
-        res.json(portfolios);
+        let list = Array.from(
+          new Set([
+            data.map((portfolioItem) =>
+              portfolioItem.portfolio.map((i) => i.symbol)
+            ),
+          ])
+        );
+        console.log(list);
+        res.json(data);
       })
       .catch((err) => console.log(err));
   },
@@ -248,10 +257,8 @@ const controllers = {
     var decoded = jwt.verify(req.query.token, process.env.JWT_SECRET);
     //UserModel.findById(hardCodeId).then((respond) => {
     let query = { user_ID: decoded.sub };
-    if (req.query.portfolioId !== undefined) {
-      query = { id: req.query.portfolioId };
-    }
-    UserPortfolioModel.updateOne(query, {
+
+    UserPortfolioModel.findByIdAndUpdate(req.query.portfolioId, {
       $push: {
         portfolio: newToken,
       },
@@ -274,14 +281,15 @@ const controllers = {
     // wants to edit, is actually present
     var decoded = jwt.verify(req.query.token, process.env.JWT_SECRET);
     UserPortfolioModel.findOne({
-      user_ID: decoded.sub, //'kevin@gmail.com'
+      _id: req.query.portfolioId,
     })
       .then((result) => {
         let portfolio = result.portfolio;
+
         portfolio.splice(req.body.index, 1);
         UserPortfolioModel.updateOne(
           {
-            user_ID: decoded.sub, //'kevin@gmail.com'
+            _id: req.query.portfolioId,
           },
           {
             $set: {
@@ -308,7 +316,7 @@ const controllers = {
     // wants to edit, is actually present
     var decoded = jwt.verify(req.query.token, process.env.JWT_SECRET);
     UserPortfolioModel.findOne({
-      user_ID: decoded.sub, //'kevin@gmail.com'
+      _id: req.query.portfolioId,
     })
       .then((result) => {
         let portfolio = result.portfolio;
@@ -318,7 +326,7 @@ const controllers = {
         portfolio[index] = rest;
         UserPortfolioModel.updateOne(
           {
-            user_ID: decoded.sub, //'kevin@gmail.com'
+            _id: req.query.portfolioId,
           },
           {
             $set: {
