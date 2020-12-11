@@ -6,7 +6,7 @@ const messageSchema = new mongoose.Schema({
   name: String,
   timestamp: {
     type: String,
-    default: moment().unix(),
+    default: moment(new Date()).unix(),
   },
 });
 
